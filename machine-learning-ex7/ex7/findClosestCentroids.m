@@ -21,11 +21,28 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+%
+% 무엇이 문제인지 이유를 알수가 없음
+%
+% dist = zeros(size(X,1), K);
+% for i = 1:K
+%     diff = (X - repmat(centroids(i,:),size(X,1), 1));
+%     dist(:,i) = diff(:,1).^2 + diff(:,2).^2;
+% end
+% [y idx] = min(dist, [], 2);
 
-
-
-
-
+for i = 1:length(X)
+	deltas = zeros(K,1);
+	x = X(i,:);
+	for j = 1:K
+		k = centroids(j,:);
+		delta = x - k;
+		deltas(j) = delta * delta';
+		%fprintf(['delta for X(%d) & centroid(%d) : %f\n'], i, j, deltas(j));
+	end
+	[y, idx(i)] = min(deltas);
+	%fprintf(['centroid idx for X(%d): %d\n'], i, idx(i) );
+end
 
 % =============================================================
 

@@ -62,21 +62,45 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% Y : [10, 5000]
+Y = zeros(num_labels, m);
+for i = 1:m
+    Y(y(i),i) = 1;
+end
+
+% Input layer
+% Theta1 : [25, 401]
+a1 = [ones(m,1) X]'; % results in [401, 5000]
+z2 = Theta1 * a1;
+
+% Hidden layer
+% Theta2 : [10, 26]
+a2 = sigmoid(z2);
+a2 = [ones(1,size(a2,2)); a2]; % results in [26, 5000]
+z3 = Theta2 * a2;
+
+% Output layer
+hx = sigmoid(z3); % results in [10, 5000]
+
+cost = -Y.*log(hx) - (1 - Y).*log(1 - hx);
+J = (1/m) * sum(cost(:));
+
+cost_reg = sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2));
+J = J + (lambda/(2*m)) * cost_reg;
 
 
+% Backpropagation
+delta_3 = (hx - Y); % results in [10, 5000]
+delta_2 = (Theta2(:,2:end)'*delta_3) .* sigmoidGradient(z2); % results in [25, 5000]
+D2 = delta_3 * a2'; % results in [10, 26]
+D1 = delta_2 * a1'; % results in [25, 401]
 
+Theta1_grad = D1 / m;
+Theta2_grad = D2 / m;
 
-
-
-
-
-
-
-
-
-
-
-
+% Regularization
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda/m)*Theta1(:,2:end);
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda/m)*Theta2(:,2:end);
 
 
 
